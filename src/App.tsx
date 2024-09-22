@@ -1,8 +1,11 @@
 import './App.css';
 import {Todolist} from "./Todolist";
-import {ChangeEvent, useRef, useState} from "react";
+import React, {ChangeEvent, useRef, useState} from "react";
 import {v1} from "uuid";
 import {AddItemForm} from "./components/AddItemForm";
+import {AppBar, Container, Grid, IconButton, Paper, Toolbar, Typography} from "@mui/material";
+import Button from "@mui/material/Button";
+import MenuIcon from '@material-ui/icons/Menu';
 
 export type TaskType = {
     id: string
@@ -34,12 +37,15 @@ function App() {
 
     let [tasks, setTasks] = useState<TasksStateType>({
         [todolistID1]: [
-            {id: v1(), title: 'HTML&CSS', isDone: true},
+            {id: v1(), title: 'HTML5', isDone: true},
+            {id: v1(), title: 'CSS3', isDone: true},
             {id: v1(), title: 'JS', isDone: true},
-            {id: v1(), title: 'ReactJS', isDone: false},
+            {id: v1(), title: 'React', isDone: false},
         ],
         [todolistID2]: [
-            {id: v1(), title: 'Rest API', isDone: true},
+            {id: v1(), title: 'Vue', isDone: true},
+            {id: v1(), title: 'Angular', isDone: false},
+            {id: v1(), title: 'Rest API', isDone: false},
             {id: v1(), title: 'GraphQL', isDone: false},
         ],
     })
@@ -86,7 +92,6 @@ function App() {
         setTodolists(newTodolists)
     }
 
-
     const removeTodolist = (todolistId: string) => {
         const newTodolists = todolists.filter(tl => tl.id !== todolistId)
         setTodolists(newTodolists)
@@ -126,58 +131,98 @@ function App() {
     return (
         <div className="App">
 
-            <select value={selectValue} onChange={onChangeSelectValue}>
-                <option>Выбрать</option>
-                <option value="1">Msk</option>
-                <option value="2">Minsk</option>
-                <option value="3">Spb</option>
-            </select>
+            <AppBar position={'static'}>
+                <Toolbar>
+                    <IconButton edge={'start'} color={'inherit'} aria-label="menu">
+                        <MenuIcon/>
+                    </IconButton>
+                    <Typography variant={'h6'}>
+                        News
+                    </Typography>
+                    <Button color={'inherit'}>Login</Button>
+                </Toolbar>
+            </AppBar>
+            <Container fixed>
+                <Grid container>
+                    <AddItemForm addItem={addTodoList}/>
+                </Grid>
+                <Grid container spacing={5}>
+                    {todolists.map((tl) => {
 
-            <input
-                type="text"
-                ref={inputRef}
-            />
-            <button
-                onClick={save}
-            >
-                save
-            </button>
-            <h3>
-                Value : {value}
-            </h3>
+                        const allTodolistTasks = tasks[tl.id]
+                        let tasksForTodolist = allTodolistTasks
 
-            {/*<AddItemForm addItem={addTodoList}/>*/}
-            {/*{todolists.map((tl) => {*/}
+                        if (tl.filter === 'active') {
+                            tasksForTodolist = allTodolistTasks.filter(task => !task.isDone)
+                        }
 
-            {/*    const allTodolistTasks = tasks[tl.id]*/}
-            {/*    let tasksForTodolist = allTodolistTasks*/}
+                        if (tl.filter === 'completed') {
+                            tasksForTodolist = allTodolistTasks.filter(task => task.isDone)
+                        }
 
-            {/*    if (tl.filter === 'active') {*/}
-            {/*        tasksForTodolist = allTodolistTasks.filter(task => !task.isDone)*/}
-            {/*    }*/}
-
-            {/*    if (tl.filter === 'completed') {*/}
-            {/*        tasksForTodolist = allTodolistTasks.filter(task => task.isDone)*/}
-            {/*    }*/}
-
-            {/*    return <Todolist*/}
-            {/*        key={tl.id}*/}
-            {/*        title={tl.title}*/}
-            {/*        addTask={addTask}*/}
-            {/*        todolistId={tl.id}*/}
-            {/*        filter={tl.filter}*/}
-            {/*        removeTask={removeTask}*/}
-            {/*        tasks={tasksForTodolist}*/}
-            {/*        changeFilter={changeFilter}*/}
-            {/*        changeTaskText={changeTaskText}*/}
-            {/*        removeTodolist={removeTodolist}*/}
-            {/*        changeTodoTitle={changeTodoTitle}*/}
-            {/*        changeTaskStatus={changeTaskStatus}*/}
-            {/*    />*/}
-            {/*})}*/}
-            {/*);*/}
+                        return (
+                            <Grid item>
+                                <Paper style={{padding:'2rem'}}>
+                                    <Todolist
+                                        key={tl.id}
+                                        title={tl.title}
+                                        addTask={addTask}
+                                        todolistId={tl.id}
+                                        filter={tl.filter}
+                                        removeTask={removeTask}
+                                        tasks={tasksForTodolist}
+                                        changeFilter={changeFilter}
+                                        changeTaskText={changeTaskText}
+                                        removeTodolist={removeTodolist}
+                                        changeTodoTitle={changeTodoTitle}
+                                        changeTaskStatus={changeTaskStatus}
+                                    />
+                                </Paper>
+                            </Grid>
+                        )
+                    })}
+                </Grid>
+            </Container>
         </div>
     )
 }
 
 export default App;
+
+
+{/*<select value={selectValue} onChange={onChangeSelectValue}>*/
+}
+{/*    <option>Выбрать</option>*/
+}
+{/*    <option value="1">Msk</option>*/
+}
+{/*    <option value="2">Minsk</option>*/
+}
+{/*    <option value="3">Spb</option>*/
+}
+{/*</select>*/
+}
+
+{/*<input*/
+}
+{/*    type="text"*/
+}
+{/*    ref={inputRef}*/
+}
+{/*/>*/
+}
+{/*<button*/
+}
+{/*    onClick={save}*/
+}
+{/*>*/
+}
+{/*    save*/
+}
+{/*</button>*/
+}
+{/*<h3>*/
+}
+{/*    Value : {value}*/
+}
+// {/*</h3>
